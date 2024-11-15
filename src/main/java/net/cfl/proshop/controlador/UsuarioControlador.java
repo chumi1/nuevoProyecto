@@ -1,0 +1,73 @@
+package net.cfl.proshop.controlador;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
+import net.cfl.proshop.Usuario;
+import net.cfl.proshop.dto.UsuarioDto;
+import net.cfl.proshop.excepciones.RecursoNoEncontradoEx;
+import net.cfl.proshop.excepciones.UsuarioExisteEx;
+import net.cfl.proshop.respuesta.ApiRespuesta;
+import net.cfl.proshop.servicios.carrito.ICarritoServicio;
+import net.cfl.proshop.servicios.producto.IProductoServicio;
+import net.cfl.proshop.servicios.usuario.ActualizaUsuarioReq;
+import net.cfl.proshop.servicios.usuario.AgregaUsuarioReq;
+import net.cfl.proshop.servicios.usuario.IUsuarioServicio;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("${api.prefix}/usuarios")
+public class UsuarioControlador {
+	private final IUsuarioServicio usuarioServicio;
+	
+	@GetMapping("/{usuarioId}/usuario")
+	public ResponseEntity<ApiRespuesta> traeUsuario(@PathVariable Long usuarioId){
+		try {
+			Usuario usuario = usuarioServicio.traeUsuarioPorId(usuarioId);
+			UsuarioDto usuarioDto = usuarioServicio.convertirAUsuarioDto(usuario);
+			return ResponseEntity.ok (new ApiRespuesta("Exito", usuarioDto));
+		} catch (RecursoNoEncontradoEx e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiRespuesta(e.getMessage(), null));
+		}
+	}
+	@PostMapping("/agrega")
+	public ResponseEntity<ApiRespuesta>creaUsuario(AgregaUsuarioReq request ){
+		try {
+			Usuario usuario = usuarioServicio.crearUsuario(request);
+			UsuarioDto usuarioDto = usuarioServicio.convertirAUsuarioDto(usuario);
+			return ResponseEntity.ok(new ApiRespuesta("Usuario creado", usuarioDto));
+		} catch (UsuarioExisteEx e){
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiRespuesta(e.getMessage(), null));
+		}
+	}
+	@PutMapping("/{usuarioId}/actualiza")
+	public ResponseEntity<ApiRespuesta>actualizaUsuario(@RequestBody ActualizaUsuarioReq request, Long usuarioId){
+		try {
+			Usuario usuario = usuarioServicio.actualizaUsuario(request, usuarioId);
+			UsuarioDto usuarioDto = usuarioServicio.convertirAUsuarioDto(usuario);
+			return ResponseEntity.ok(new ApiRespuesta("Usuario actualizado", usuarioDto));
+		} catch (RecursoNoEncontradoEx e){
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ApiRespuesta(e.getMessage(), null));
+		}
+	}
+	@DeleteMapping("/{usuarioId}/borrar")
+	public ResponseEntity<ApiRespuesta>eliminaUsuario(Long usuarioId){
+		try {
+			usuarioServicio.borrarUsuario(usuarioId);
+			return ResponseEntity.ok(new ApiRespuesta("Usuario eliminado", null));
+		}catch (RecursoNoEncontradoEx e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ApiRespuesta(e.getMessage(), null));
+		}
+	}
+}
