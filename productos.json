@@ -39,3 +39,27 @@
 	"categoria":"electrodomesticos"
 	
 }
+{
+	"nombre":"Licuadora",
+	"marca":"Molinex",
+	"descripcion":"3 niveles",
+	"precio":"150000",
+	"stock":"80",
+	"categoria":"electrodomesticos"	
+}
+{
+	"nombre":"Tablet",
+	"marca":"Samsung",
+	"descripcion":"15 pulgadas",
+	"precio":"400000",
+	"stock":"25",
+	"categoria":"electro"
+}
+{
+	"nombre":"Mesa",
+	"marca":"Platinum",
+	"descripcion":"Escritorio",
+	"precio":"115000",
+	"stock":"40",
+	"categoria":"muebles y oficina"
+}
