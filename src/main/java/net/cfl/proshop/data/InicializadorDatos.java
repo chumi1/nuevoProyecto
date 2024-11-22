@@ -20,7 +20,7 @@ public class InicializadorDatos implements ApplicationListener<ApplicationReadyE
 	 
 	 private void creaUsuarioPorDefectoSiNoExiste() {
 		 for (int i = 1; i < 5;  i++) {
-			 String emailDefault = "usuario" + "@email.com";
+			 String emailDefault = "usuario" + i + "@email.com";
 			 if (usuarioRepositorio.existsByEmail(emailDefault)) {
 				 continue;
 			 }
